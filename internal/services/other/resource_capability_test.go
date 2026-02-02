@@ -41,12 +41,14 @@ func TestAccResourceCapability(t *testing.T) {
 					resource.TestCheckResourceAttr(resName, "enabled", fmt.Sprintf("%t", cap.Enabled)),
 					resource.TestCheckResourceAttr(resName, "properties.url", cap.Properties["url"]),
 					resource.TestCheckResourceAttr(resName, "properties.names", cap.Properties["names"]),
+					// Note: We don't check properties.secret because it's obfuscated by the API
 				),
 			},
 			{
-				ResourceName:      resName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"properties.secret"},
 			},
 		},
 	})
