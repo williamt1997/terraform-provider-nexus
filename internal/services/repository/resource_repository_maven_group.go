@@ -83,26 +83,8 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
-	// The Nexus API doesn't return Maven configuration for group repositories in GET requests,
-	// so we preserve the existing state values if the API response has empty Maven fields
-	if repo.Maven.VersionPolicy == "" && repo.Maven.LayoutPolicy == "" {
-		// API didn't return Maven config, preserve existing state values if they exist
-		mavenFromState := resourceData.Get("maven").([]interface{})
-		if len(mavenFromState) > 0 && mavenFromState[0] != nil {
-			if err := resourceData.Set("maven", mavenFromState); err != nil {
-				return err
-			}
-		} else {
-			// No existing state (e.g., on import), set empty Maven config
-			if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
-				return err
-			}
-		}
-	} else {
-		// API returned Maven config, use it
-		if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
-			return err
-		}
+	if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
+		return err
 	}
 
 	return nil
