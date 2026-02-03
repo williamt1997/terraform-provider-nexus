@@ -3,8 +3,8 @@ package repository
 import (
 	"testing"
 
-	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
 	"github.com/stretchr/testify/assert"
+	"github.com/williamt1997/go-nexus-client/nexus3/schema/repository"
 )
 
 func TestGetHTTPClientConnection(t *testing.T) {

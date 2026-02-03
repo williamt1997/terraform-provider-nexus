@@ -1,11 +1,11 @@
 package repository
 
 import (
-	nexus "github.com/datadrivers/go-nexus-client/nexus3"
-	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
-	"github.com/datadrivers/terraform-provider-nexus/internal/schema/common"
-	repositorySchema "github.com/datadrivers/terraform-provider-nexus/internal/schema/repository"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	nexus "github.com/williamt1997/go-nexus-client/nexus3"
+	"github.com/williamt1997/go-nexus-client/nexus3/schema/repository"
+	"github.com/williamt1997/terraform-provider-nexus/internal/schema/common"
+	repositorySchema "github.com/williamt1997/terraform-provider-nexus/internal/schema/repository"
 )
 
 func ResourceRepositoryMavenGroup() *schema.Resource {
@@ -52,7 +52,7 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
 		},
-		Maven: &repository.Maven{
+		Maven: repository.Maven{
 			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
 			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
 		},
