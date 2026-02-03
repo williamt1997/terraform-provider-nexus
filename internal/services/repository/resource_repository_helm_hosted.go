@@ -125,12 +125,6 @@ func resourceHelmHostedRepositoryRead(resourceData *schema.ResourceData, m inter
 		return nil
 	}
 
-	if v, ok := resourceData.GetOk("maven"); ok {
-		if err := resourceData.Set("maven", v); err != nil {
-			return err
-		}
-	}
-
 	return setHelmHostedRepositoryToResourceData(repo, resourceData)
 }
 
