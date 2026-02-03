@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	nexus "github.com/williamt1997/go-nexus-client/nexus3"
 	"github.com/williamt1997/go-nexus-client/nexus3/schema/repository"
@@ -10,23 +12,22 @@ import (
 
 func ResourceRepositoryMavenGroup() *schema.Resource {
 	return &schema.Resource{
-		Description: "Use this resource to create a group maven repository.",
+		Description: "Use this resource to create a group Maven repository.",
 
 		Create: resourceMavenGroupRepositoryCreate,
 		Delete: resourceMavenGroupRepositoryDelete,
 		Exists: resourceMavenGroupRepositoryExists,
 		Read:   resourceMavenGroupRepositoryRead,
 		Update: resourceMavenGroupRepositoryUpdate,
+
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceMavenGroupRepositoryImport,
 		},
 
 		Schema: map[string]*schema.Schema{
-			// Common schemas
-			"id":     common.ResourceID,
-			"name":   repositorySchema.ResourceName,
-			"online": repositorySchema.ResourceOnline,
-			// Group schemas
+			"id":      common.ResourceID,
+			"name":    repositorySchema.ResourceName,
+			"online":  repositorySchema.ResourceOnline,
 			"group":   repositorySchema.ResourceGroup,
 			"storage": repositorySchema.ResourceStorage,
 			"maven":   repositorySchema.ResourceMaven,
@@ -39,13 +40,11 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
 	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
 
-	// Build group member names
 	groupMemberNames := []string{}
 	for _, name := range groupConfig["member_names"].([]interface{}) {
 		groupMemberNames = append(groupMemberNames, name.(string))
 	}
 
-	// Build the MavenGroupRepository struct
 	repo := repository.MavenGroupRepository{
 		Name:   resourceData.Get("name").(string),
 		Online: resourceData.Get("online").(bool),
@@ -88,12 +87,12 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 
 func resourceMavenGroupRepositoryCreate(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
-
 	repo := getMavenGroupRepositoryFromResourceData(resourceData)
 
 	if err := client.Repository.Maven.Group.Create(repo); err != nil {
 		return err
 	}
+
 	resourceData.SetId(repo.Name)
 
 	if v, ok := resourceData.GetOk("maven"); ok {
@@ -118,12 +117,15 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 		return nil
 	}
 
-	return setMavenGroupRepositoryToResourceData(repo, resourceData)
+	if err := setMavenGroupRepositoryToResourceData(repo, resourceData); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func resourceMavenGroupRepositoryUpdate(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
-
 	repoName := resourceData.Id()
 	repo := getMavenGroupRepositoryFromResourceData(resourceData)
 
@@ -147,7 +149,18 @@ func resourceMavenGroupRepositoryDelete(resourceData *schema.ResourceData, m int
 
 func resourceMavenGroupRepositoryExists(resourceData *schema.ResourceData, m interface{}) (bool, error) {
 	client := m.(*nexus.NexusClient)
-
 	repo, err := client.Repository.Maven.Group.Get(resourceData.Id())
 	return repo != nil, err
+}
+
+func resourceMavenGroupRepositoryImport(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	d.SetId(d.Id())
+
+	if v, ok := d.GetOk("maven"); ok {
+		if err := d.Set("maven", v); err != nil {
+			return nil, err
+		}
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
