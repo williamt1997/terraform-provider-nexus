@@ -70,6 +70,11 @@ func TestAccResourceRepositoryMavenGroup(t *testing.T) {
 						resource.TestCheckResourceAttr(resourceName, "group.0.member_names.#", "1"),
 						resource.TestCheckResourceAttr(resourceName, "group.0.member_names.0", repo.Group.MemberNames[0]),
 					),
+					resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "maven.0.version_policy", string(repo.Maven.VersionPolicy)),
+						resource.TestCheckResourceAttr(resourceName, "maven.0.layout_policy", string(repo.Maven.LayoutPolicy)),
+						resource.TestCheckResourceAttr(resourceName, "maven.0.content_disposition", string(*repo.Maven.ContentDisposition)),
+					),
 				),
 			},
 			{

@@ -38,10 +38,14 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 	storageConfig := resourceData.Get("storage").([]interface{})[0].(map[string]interface{})
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
 	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
+
+	// Build group member names
 	groupMemberNames := []string{}
 	for _, name := range groupConfig["member_names"].([]interface{}) {
 		groupMemberNames = append(groupMemberNames, name.(string))
 	}
+
+	// Build the MavenGroupRepository struct
 	repo := repository.MavenGroupRepository{
 		Name:   resourceData.Get("name").(string),
 		Online: resourceData.Get("online").(bool),
@@ -56,6 +60,11 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
 			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
 		},
+	}
+
+	if mavenConfig["content_disposition"] != "" {
+		contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
+		repo.Maven.ContentDisposition = &contentDisposition
 	}
 
 	return repo
