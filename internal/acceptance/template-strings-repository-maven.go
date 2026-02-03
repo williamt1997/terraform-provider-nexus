@@ -22,8 +22,8 @@ resource "nexus_repository_maven_group" "acceptance" {
 {{- if .Maven.ContentDisposition }}
 		content_disposition = "{{ .Maven.ContentDisposition }}"
 {{- end }}
-		version_policy = "{{ .Maven.VersionPolicy }}"
 		layout_policy  = "{{ .Maven.LayoutPolicy }}"
+		version_policy = "{{ .Maven.VersionPolicy }}"
 	}
 ` + TemplateStringGroupRepository
 )

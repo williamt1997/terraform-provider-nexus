@@ -49,16 +49,16 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 	repo := repository.MavenGroupRepository{
 		Name:   resourceData.Get("name").(string),
 		Online: resourceData.Get("online").(bool),
-		Maven: repository.Maven{
-			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
-			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
-		},
 		Storage: repository.Storage{
 			BlobStoreName:               storageConfig["blob_store_name"].(string),
 			StrictContentTypeValidation: storageConfig["strict_content_type_validation"].(bool),
 		},
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
+		},
+		Maven: repository.Maven{
+			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
+			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
 		},
 	}
 

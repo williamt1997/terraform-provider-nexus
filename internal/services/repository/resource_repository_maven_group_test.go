@@ -19,18 +19,17 @@ func testAccResourceRepositoryMavenGroup() repository.MavenGroupRepository {
 	return repository.MavenGroupRepository{
 		Name:   fmt.Sprintf("test-repo-%s", acctest.RandString(10)),
 		Online: true,
+		Maven: repository.Maven{
+			VersionPolicy:      "MIXED",
+			LayoutPolicy:       "STRICT",
+			ContentDisposition: &cd,
+		},
 		Storage: repository.Storage{
 			BlobStoreName:               "default",
 			StrictContentTypeValidation: true,
 		},
 		Group: repository.Group{
 			MemberNames: []string{},
-		},
-
-		Maven: repository.Maven{
-			VersionPolicy:      "MIXED",
-			LayoutPolicy:       "STRICT",
-			ContentDisposition: &cd,
 		},
 	}
 }
