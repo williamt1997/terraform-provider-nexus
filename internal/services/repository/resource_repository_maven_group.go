@@ -29,7 +29,8 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 			// Group schemas
 			"group":   repositorySchema.ResourceGroup,
 			"storage": repositorySchema.ResourceStorage,
-			"maven":   repositorySchema.ResourceMaven,
+			// Maven schema for group repos - optional/computed since API doesn't return it in GET
+			"maven": repositorySchema.ResourceMavenGroup,
 		},
 	}
 }
@@ -37,7 +38,6 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) repository.MavenGroupRepository {
 	storageConfig := resourceData.Get("storage").([]interface{})[0].(map[string]interface{})
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
-	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
 
 	// Build group member names
 	groupMemberNames := []string{}
@@ -56,15 +56,20 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
 		},
-		Maven: repository.Maven{
-			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
-			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
-		},
 	}
 
-	if mavenConfig["content_disposition"] != "" {
-		contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
-		repo.Maven.ContentDisposition = &contentDisposition
+	// Maven config is optional for group repos (since API doesn't return it)
+	if mavenList := resourceData.Get("maven").([]interface{}); len(mavenList) > 0 && mavenList[0] != nil {
+		mavenConfig := mavenList[0].(map[string]interface{})
+		repo.Maven = repository.Maven{
+			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
+			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
+		}
+
+		if mavenConfig["content_disposition"] != "" {
+			contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
+			repo.Maven.ContentDisposition = &contentDisposition
+		}
 	}
 
 	return repo
@@ -83,9 +88,8 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
-	if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
-		return err
-	}
+	// Nexus API doesn't return maven config in GET responses for group repositories.
+	// Since maven is optional/computed, we don't need to set it here.
 
 	return nil
 }

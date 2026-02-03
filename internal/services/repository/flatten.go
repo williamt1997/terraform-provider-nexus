@@ -237,8 +237,8 @@ func flattenDockerHostedStorage(dockerStorage *repository.DockerHostedStorage) [
 
 func flattenMaven(maven *repository.Maven) []map[string]interface{} {
 	data := map[string]interface{}{
-		"version_policy": maven.VersionPolicy,
-		"layout_policy":  maven.LayoutPolicy,
+		"version_policy": string(maven.VersionPolicy),
+		"layout_policy":  string(maven.LayoutPolicy),
 	}
 	if maven.ContentDisposition != nil {
 		data["content_disposition"] = string(*maven.ContentDisposition)
