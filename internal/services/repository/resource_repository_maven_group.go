@@ -83,6 +83,12 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
+	if repo.Maven.VersionPolicy != "" || repo.Maven.LayoutPolicy != "" {
+		if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -111,9 +117,6 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 		resourceData.SetId("")
 		return nil
 	}
-
-	inputMaven := getMavenGroupRepositoryFromResourceData(resourceData).Maven
-	repo.Maven = inputMaven
 
 	return setMavenGroupRepositoryToResourceData(repo, resourceData)
 }
