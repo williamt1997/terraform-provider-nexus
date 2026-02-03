@@ -69,47 +69,4 @@ var (
 			},
 		},
 	}
-	// ResourceMavenGroup is optional/computed for group repositories since the API doesn't return maven config in GET responses
-	ResourceMavenGroup = &schema.Schema{
-		Description: "Maven contains additional data of maven repository. Note: This is not returned by the Nexus API for group repositories, but can be set during creation/update.",
-		Type:        schema.TypeList,
-		Optional:    true,
-		Computed:    true,
-		MaxItems:    1,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"version_policy": {
-					Description: "What type of artifacts does this repository store? Possible Value: `RELEASE`, `SNAPSHOT` or `MIXED`",
-					Optional:    true,
-					Computed:    true,
-					Type:        schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{
-						string(repository.MavenVersionPolicyRelease),
-						string(repository.MavenVersionPolicySnapshot),
-						string(repository.MavenVersionPolicyMixed),
-					}, false),
-				},
-				"layout_policy": {
-					Description: "Validate that all paths are maven artifact or metadata paths. Possible Value: `STRICT` or `PERMISSIVE`",
-					Optional:    true,
-					Computed:    true,
-					Type:        schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{
-						string(repository.MavenLayoutPolicyStrict),
-						string(repository.MavenLayoutPolicyPermissive),
-					}, false),
-				},
-				"content_disposition": {
-					Description: "Add Content-Disposition header as 'Attachment' to disable some content from being inline in a browse. Possible Value: `INLINE` or `ATTACHMENT`",
-					Optional:    true,
-					Computed:    true,
-					Type:        schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{
-						string(repository.MavenContentDispositionInline),
-						string(repository.MavenContentDispositionAttachment),
-					}, false),
-				},
-			},
-		},
-	}
 )

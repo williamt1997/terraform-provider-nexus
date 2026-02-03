@@ -29,8 +29,7 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 			// Group schemas
 			"group":   repositorySchema.ResourceGroup,
 			"storage": repositorySchema.ResourceStorage,
-			// Maven schema for group repos - optional/computed since API doesn't return it in GET
-			"maven": repositorySchema.ResourceMavenGroup,
+			"maven":   repositorySchema.ResourceMaven,
 		},
 	}
 }
@@ -38,6 +37,7 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) repository.MavenGroupRepository {
 	storageConfig := resourceData.Get("storage").([]interface{})[0].(map[string]interface{})
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
+	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
 
 	// Build group member names
 	groupMemberNames := []string{}
@@ -56,20 +56,15 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
 		},
-	}
-
-	// Maven config is optional for group repos (since API doesn't return it)
-	if mavenList := resourceData.Get("maven").([]interface{}); len(mavenList) > 0 && mavenList[0] != nil {
-		mavenConfig := mavenList[0].(map[string]interface{})
-		repo.Maven = repository.Maven{
+		Maven: repository.Maven{
 			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
 			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
-		}
+		},
+	}
 
-		if mavenConfig["content_disposition"] != "" {
-			contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
-			repo.Maven.ContentDisposition = &contentDisposition
-		}
+	if mavenConfig["content_disposition"] != "" {
+		contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
+		repo.Maven.ContentDisposition = &contentDisposition
 	}
 
 	return repo
@@ -86,6 +81,28 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 
 	if err := resourceData.Set("group", flattenGroup(&repo.Group)); err != nil {
 		return err
+	}
+
+	// The Nexus API doesn't return Maven configuration for group repositories in GET requests,
+	// so we preserve the existing state values if the API response has empty Maven fields
+	if repo.Maven.VersionPolicy == "" && repo.Maven.LayoutPolicy == "" {
+		// API didn't return Maven config, preserve existing state values if they exist
+		mavenFromState := resourceData.Get("maven").([]interface{})
+		if len(mavenFromState) > 0 && mavenFromState[0] != nil {
+			if err := resourceData.Set("maven", mavenFromState); err != nil {
+				return err
+			}
+		} else {
+			// No existing state (e.g., on import), set empty Maven config
+			if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
+				return err
+			}
+		}
+	} else {
+		// API returned Maven config, use it
+		if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
+			return err
+		}
 	}
 
 	return nil
