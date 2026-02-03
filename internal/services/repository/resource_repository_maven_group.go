@@ -83,10 +83,6 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
-	if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -99,6 +95,12 @@ func resourceMavenGroupRepositoryCreate(resourceData *schema.ResourceData, m int
 		return err
 	}
 	resourceData.SetId(repo.Name)
+
+	if v, ok := resourceData.GetOk("maven"); ok {
+		if err := resourceData.Set("maven", v); err != nil {
+			return err
+		}
+	}
 
 	return resourceMavenGroupRepositoryRead(resourceData, m)
 }
@@ -127,6 +129,12 @@ func resourceMavenGroupRepositoryUpdate(resourceData *schema.ResourceData, m int
 
 	if err := client.Repository.Maven.Group.Update(repoName, repo); err != nil {
 		return err
+	}
+
+	if v, ok := resourceData.GetOk("maven"); ok {
+		if err := resourceData.Set("maven", v); err != nil {
+			return err
+		}
 	}
 
 	return resourceMavenGroupRepositoryRead(resourceData, m)
