@@ -23,16 +23,4 @@ resource "nexus_repository_yum_group" "acceptance" {
 		nexus_repository_yum_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryYumProxy = `
-resource "nexus_repository_yum_proxy" "acceptance" {
-{{ if .YumSigning }}
-	yum_signing {
-		keypair = "{{ .YumSigning.Keypair }}"
-{{ if .YumSigning.Passphrase }}
-		passphrase = "{{ .YumSigning.Passphrase }}"
-{{ end -}}
-	}
-{{ end -}}
-` + TemplateStringProxyRepository
 )

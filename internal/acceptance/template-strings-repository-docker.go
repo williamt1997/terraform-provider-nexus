@@ -42,40 +42,6 @@ resource "nexus_repository_docker_group" "acceptance" {
 	]
 ` + TemplateStringGroupDeployRepository
 
-	TemplateStringRepositoryDockerProxy = `
-resource "nexus_repository_docker_proxy" "acceptance" {
-	docker {
-		force_basic_auth = "{{ .Docker.ForceBasicAuth }}"
-{{- if .Docker.HTTPPort }}
-		http_port = "{{ .Docker.HTTPPort }}"
-{{- end }}
-{{- if .Docker.HTTPSPort }}
-		https_port = "{{ .Docker.HTTPSPort }}"
-{{- end }}
-{{- if .Docker.Subdomain }}
-		subdomain = "{{ .Docker.Subdomain }}"
-{{- end }}
-		v1_enabled = "{{ .Docker.V1Enabled }}"
-	}
-
-	docker_proxy {
-		index_type = "{{ .DockerProxy.IndexType }}"
-{{- if .DockerProxy.IndexURL }}
-		index_url = "{{ .DockerProxy.IndexURL }}"
-{{- end }}
-{{- if .DockerProxy.CacheForeignLayers }}
-		cache_foreign_layers = "{{ .DockerProxy.CacheForeignLayers }}"
-{{- end }}
-{{- if .DockerProxy.ForeignLayerUrlWhitelist }}
-		foreign_layer_url_whitelist = [
-		{{- range $val := .DockerProxy.ForeignLayerUrlWhitelist }}
-			"{{ $val }}",
-		{{ end -}}
-		]
-{{- end }}
-	}
-` + TemplateStringProxyRepository
-
 	TemplateStringDockerStorageHosted = `
 storage {
 	blob_store_name                = "{{ .Storage.BlobStoreName }}"

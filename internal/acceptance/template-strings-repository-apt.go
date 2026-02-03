@@ -11,11 +11,4 @@ resource "nexus_repository_apt_hosted" "acceptance" {
 {{- end }}
 	}
 ` + TemplateStringHostedRepository
-
-	TemplateStringRepositoryAptProxy = `
-resource "nexus_repository_apt_proxy" "acceptance" {
-	distribution = "{{ .Apt.Distribution }}"
-	flat         = "{{ .Apt.Flat }}"
-
-` + TemplateStringProxyRepository
 )

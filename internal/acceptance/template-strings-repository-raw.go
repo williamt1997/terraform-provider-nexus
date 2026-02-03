@@ -13,8 +13,4 @@ resource "nexus_repository_raw_group" "acceptance" {
 	{{ end -}}
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryRawProxy = `
-resource "nexus_repository_raw_proxy" "acceptance" {
-` + TemplateStringProxyRepository
 )

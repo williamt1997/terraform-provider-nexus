@@ -11,8 +11,4 @@ resource "nexus_repository_rubygems_group" "acceptance" {
 		nexus_repository_rubygems_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryRubygemsProxy = `
-resource "nexus_repository_rubygems_proxy" "acceptance" {
-` + TemplateStringProxyRepository
 )

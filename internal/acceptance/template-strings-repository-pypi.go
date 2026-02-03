@@ -11,8 +11,4 @@ resource "nexus_repository_pypi_group" "acceptance" {
 		nexus_repository_pypi_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryPypiProxy = `
-resource "nexus_repository_pypi_proxy" "acceptance" {
-` + TemplateStringProxyRepository
 )
