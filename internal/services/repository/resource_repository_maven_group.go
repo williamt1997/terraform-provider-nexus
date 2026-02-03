@@ -88,9 +88,6 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
-	// Nexus API doesn't return maven config in GET responses for group repositories.
-	// Since maven is optional/computed, we don't need to set it here.
-
 	return nil
 }
 
