@@ -21,7 +21,6 @@ func Provider() *schema.Provider {
 			"nexus_repository_docker_group":               repository.ResourceRepositoryDockerGroup(),
 			"nexus_repository_docker_hosted":              repository.ResourceRepositoryDockerHosted(),
 			"nexus_repository_gitlfs_hosted":              repository.ResourceRepositoryGitlfsHosted(),
-			"nexus_repository_go_group":                   repository.ResourceRepositoryGoGroup(),
 			"nexus_repository_helm_hosted":                repository.ResourceRepositoryHelmHosted(),
 			"nexus_repository_maven_group":                repository.ResourceRepositoryMavenGroup(),
 			"nexus_repository_maven_hosted":               repository.ResourceRepositoryMavenHosted(),
