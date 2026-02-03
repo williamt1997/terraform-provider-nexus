@@ -14,6 +14,8 @@ import (
 )
 
 func testAccResourceRepositoryMavenGroup() repository.MavenGroupRepository {
+	cd := repository.MavenContentDispositionAttachment
+
 	return repository.MavenGroupRepository{
 		Name:   fmt.Sprintf("test-repo-%s", acctest.RandString(10)),
 		Online: true,
@@ -23,6 +25,12 @@ func testAccResourceRepositoryMavenGroup() repository.MavenGroupRepository {
 		},
 		Group: repository.Group{
 			MemberNames: []string{},
+		},
+
+		Maven: repository.Maven{
+			VersionPolicy:      "MIXED",
+			LayoutPolicy:       "STRICT",
+			ContentDisposition: &cd,
 		},
 	}
 }
