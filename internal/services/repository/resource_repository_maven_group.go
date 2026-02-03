@@ -83,6 +83,10 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
+	if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
+		return err
+	}
+
 	return nil
 }
 
