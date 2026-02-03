@@ -116,6 +116,8 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 		return nil
 	}
 
+	repo.Maven = getMavenGroupRepositoryFromResourceData(resourceData).Maven
+
 	return setMavenGroupRepositoryToResourceData(repo, resourceData)
 }
 
