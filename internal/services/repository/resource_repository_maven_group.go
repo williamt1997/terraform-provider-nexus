@@ -1,11 +1,11 @@
 package repository
 
 import (
-	nexus "github.com/datadrivers/go-nexus-client/nexus3"
-	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
-	"github.com/datadrivers/terraform-provider-nexus/internal/schema/common"
-	repositorySchema "github.com/datadrivers/terraform-provider-nexus/internal/schema/repository"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	nexus "github.com/williamt1997/go-nexus-client/v2/nexus3"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/repository"
+	"github.com/williamt1997/terraform-provider-nexus/internal/schema/common"
+	repositorySchema "github.com/williamt1997/terraform-provider-nexus/internal/schema/repository"
 )
 
 func ResourceRepositoryMavenGroup() *schema.Resource {
@@ -29,6 +29,8 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 			// Group schemas
 			"group":   repositorySchema.ResourceGroup,
 			"storage": repositorySchema.ResourceStorage,
+			// Maven hosted schemas
+			"maven": repositorySchema.ResourceMaven,
 		},
 	}
 }
@@ -36,6 +38,8 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) repository.MavenGroupRepository {
 	storageConfig := resourceData.Get("storage").([]interface{})[0].(map[string]interface{})
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
+	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
+
 	groupMemberNames := []string{}
 	for _, name := range groupConfig["member_names"].([]interface{}) {
 		groupMemberNames = append(groupMemberNames, name.(string))
@@ -50,6 +54,15 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
 		},
+		Maven: &repository.Maven{
+			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
+			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
+		},
+	}
+
+	if mavenConfig["content_disposition"] != "" {
+		contentDisposition := repository.MavenContentDisposition(mavenConfig["content_disposition"].(string))
+		repo.Maven.ContentDisposition = &contentDisposition
 	}
 
 	return repo
@@ -66,6 +79,12 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 
 	if err := resourceData.Set("group", flattenGroup(&repo.Group)); err != nil {
 		return err
+	}
+
+	if repo.Maven != nil {
+		if err := resourceData.Set("maven", flattenMaven(repo.Maven)); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -95,6 +114,21 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 	if repo == nil {
 		resourceData.SetId("")
 		return nil
+	}
+
+	if repo.Maven == nil {
+		// reconstruct from the user inputs that we printed
+		if v, ok := resourceData.Get("maven").([]interface{}); ok && len(v) > 0 {
+			m := v[0].(map[string]interface{})
+			repo.Maven = &repository.Maven{
+				VersionPolicy: repository.MavenVersionPolicy(m["version_policy"].(string)),
+				LayoutPolicy:  repository.MavenLayoutPolicy(m["layout_policy"].(string)),
+			}
+			if cd, exists := m["content_disposition"]; exists && cd.(string) != "" {
+				contentDisposition := repository.MavenContentDisposition(cd.(string))
+				repo.Maven.ContentDisposition = &contentDisposition
+			}
+		}
 	}
 
 	return setMavenGroupRepositoryToResourceData(repo, resourceData)

@@ -7,16 +7,23 @@ import (
 	"testing"
 	"text/template"
 
-	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
-	"github.com/datadrivers/terraform-provider-nexus/internal/acceptance"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/repository"
+	"github.com/williamt1997/terraform-provider-nexus/internal/acceptance"
 )
 
 func testAccResourceRepositoryMavenGroup() repository.MavenGroupRepository {
+	cd := repository.MavenContentDispositionAttachment
+
 	return repository.MavenGroupRepository{
 		Name:   fmt.Sprintf("test-repo-%s", acctest.RandString(10)),
 		Online: true,
+		Maven: &repository.Maven{
+			VersionPolicy:      "MIXED",
+			LayoutPolicy:       "STRICT",
+			ContentDisposition: &cd,
+		},
 		Storage: repository.Storage{
 			BlobStoreName:               "default",
 			StrictContentTypeValidation: true,
@@ -62,6 +69,11 @@ func TestAccResourceRepositoryMavenGroup(t *testing.T) {
 						resource.TestCheckResourceAttr(resourceName, "group.0.member_names.#", "1"),
 						resource.TestCheckResourceAttr(resourceName, "group.0.member_names.0", repo.Group.MemberNames[0]),
 					),
+					resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "maven.0.version_policy", string(repo.Maven.VersionPolicy)),
+						resource.TestCheckResourceAttr(resourceName, "maven.0.layout_policy", string(repo.Maven.LayoutPolicy)),
+						resource.TestCheckResourceAttr(resourceName, "maven.0.content_disposition", string(*repo.Maven.ContentDisposition)),
+					),
 				),
 			},
 			{
@@ -69,6 +81,14 @@ func TestAccResourceRepositoryMavenGroup(t *testing.T) {
 				ImportStateId:     repo.Name,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"maven",
+					"maven.#",
+					"maven.0.%",
+					"maven.0.version_policy",
+					"maven.0.layout_policy",
+					"maven.0.content_disposition",
+				},
 			},
 		},
 	})

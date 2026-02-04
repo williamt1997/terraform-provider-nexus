@@ -11,9 +11,4 @@ resource "nexus_repository_bower_group" "acceptance" {
 		nexus_repository_bower_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryBowerProxy = `
-resource "nexus_repository_bower_proxy" "acceptance" {
-	rewrite_package_urls = {{ .Bower.RewritePackageUrls }}
-` + TemplateStringProxyRepository
 )

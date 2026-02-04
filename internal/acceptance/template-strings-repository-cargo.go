@@ -11,8 +11,4 @@ resource "nexus_repository_cargo_group" "acceptance" {
 		nexus_repository_cargo_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryCargoProxy = `
-resource "nexus_repository_cargo_proxy" "acceptance" {
-` + TemplateStringProxyRepository
 )

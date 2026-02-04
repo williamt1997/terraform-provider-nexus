@@ -11,9 +11,4 @@ resource "nexus_repository_npm_group" "acceptance" {
 		nexus_repository_npm_hosted.acceptance
 	]
 ` + TemplateStringGroupDeployRepository
-
-	TemplateStringRepositoryNpmProxy = `
-resource "nexus_repository_npm_proxy" "acceptance" {
-	remove_quarantined = {{ .Npm.RemoveQuarantined }}
-` + TemplateStringProxyRepository
 )

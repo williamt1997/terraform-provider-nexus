@@ -11,8 +11,4 @@ resource "nexus_repository_r_group" "acceptance" {
 		nexus_repository_r_hosted.acceptance
 	]
 ` + TemplateStringGroupRepository
-
-	TemplateStringRepositoryRProxy = `
-resource "nexus_repository_r_proxy" "acceptance" {
-` + TemplateStringProxyRepository
 )

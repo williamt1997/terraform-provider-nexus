@@ -1,14 +1,6 @@
 package acceptance
 
 const (
-	TemplateStringProxyRepository = TemplateStringNameOnline +
-		TemplateStringCleanup +
-		TemplateStringHTTPClient +
-		TemplateStringNegativeCache +
-		TemplateStringProxy +
-		TemplateStringRoutingRule +
-		TemplateStringStorage +
-		TemplateStringEnd
 	TemplateStringHostedRepository = TemplateStringNameOnline +
 		TemplateStringCleanup +
 		TemplateStringComponent +
@@ -134,12 +126,6 @@ group {
 			metadata_max_age = "{{ .Proxy.MetadataMaxAge }}"
 		{{ end -}}
 	}
-`
-
-	TemplateStringRoutingRule = `
-	{{ if .RoutingRule }}
-		routing_rule = nexus_routing_rule.acceptance.name
-	{{ end -}}
 `
 
 	TemplateStringStorage = `

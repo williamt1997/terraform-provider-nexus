@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/datadrivers/go-nexus-client/nexus3/schema"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema"
 )
 
 func testAccResourceRoutingRuleConfig(rule schema.RoutingRule) string {
