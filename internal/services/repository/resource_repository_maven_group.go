@@ -84,16 +84,14 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 	}
 
 	if repo.Maven != nil {
-		mavenMap := map[string]interface{}{
-			"version_policy": repo.Maven.VersionPolicy,
-			"layout_policy":  repo.Maven.LayoutPolicy,
-		}
-		if repo.Maven.ContentDisposition != nil {
-			mavenMap["content_disposition"] = *repo.Maven.ContentDisposition
-		}
-
-		if err := resourceData.Set("maven", []interface{}{mavenMap}); err != nil {
+		if err := resourceData.Set("maven", flattenMaven(repo.Maven)); err != nil {
 			return err
+		}
+	} else {
+		if v, ok := resourceData.GetOk("maven"); ok {
+			if err := resourceData.Set("maven", v); err != nil {
+				return err
+			}
 		}
 	}
 
