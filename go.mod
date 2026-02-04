@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.23.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.38.1
 	github.com/stretchr/testify v1.11.1
-	github.com/williamt1997/go-nexus-client v0.0.0-20260203114548-175c11ea4de9
+	github.com/williamt1997/go-nexus-client/v2 v2.0.0-20260204095021-3e3e94664b11
 )
 
 require (

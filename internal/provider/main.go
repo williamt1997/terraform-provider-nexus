@@ -2,8 +2,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	nexus "github.com/williamt1997/go-nexus-client/nexus3"
-	"github.com/williamt1997/go-nexus-client/nexus3/pkg/client"
+	nexus "github.com/williamt1997/go-nexus-client/v2/nexus3"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/pkg/client"
 	"github.com/williamt1997/terraform-provider-nexus/internal/services/repository"
 	"github.com/williamt1997/terraform-provider-nexus/internal/services/security"
 )

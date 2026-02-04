@@ -715,8 +715,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1 h1:cQriyiUvjTwOHg8QZaPihLWeRAAVoCpE00IU
 github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21PIudVV/E3rRQok=
 github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
 github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
-github.com/williamt1997/go-nexus-client v0.0.0-20260203114548-175c11ea4de9 h1:kV5E74vCYo2n48MXD6gZJ6LpfsC2rDcBRBPoKlPhU+A=
-github.com/williamt1997/go-nexus-client v0.0.0-20260203114548-175c11ea4de9/go.mod h1:gn4vB1T8voCc2KVPemXDAfqcntglgqVAR5DcUlWuuRo=
+github.com/williamt1997/go-nexus-client/v2 v2.0.0-20260204095021-3e3e94664b11 h1:MIQdylwC5CooJbW74brp5ZIRCiPFXInsY9daHb1JU6Q=
+github.com/williamt1997/go-nexus-client/v2 v2.0.0-20260204095021-3e3e94664b11/go.mod h1:BovJMt1whx+uGDR2BW8CxlSREswi+Xq+09kXl7ZE1EA=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
 github.com/xen0n/gosmopolitan v1.2.2 h1:/p2KTnMzwRexIW8GlKawsTWOxn7UHA+jCMF/V8HHtvU=

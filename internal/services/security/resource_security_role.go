@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	nexus "github.com/williamt1997/go-nexus-client/nexus3"
-	"github.com/williamt1997/go-nexus-client/nexus3/schema/security"
+	nexus "github.com/williamt1997/go-nexus-client/v2/nexus3"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/security"
 	"github.com/williamt1997/terraform-provider-nexus/internal/schema/common"
 	"github.com/williamt1997/terraform-provider-nexus/internal/tools"
 )

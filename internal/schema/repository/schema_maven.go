@@ -3,7 +3,7 @@ package repository
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/williamt1997/go-nexus-client/nexus3/schema/repository"
+	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/repository"
 )
 
 var (
