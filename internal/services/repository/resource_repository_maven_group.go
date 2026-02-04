@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	nexus "github.com/williamt1997/go-nexus-client/v2/nexus3"
 	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/repository"
@@ -83,18 +81,6 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
-	if repo.Maven != nil {
-		if err := resourceData.Set("maven", flattenMaven(repo.Maven)); err != nil {
-			return err
-		}
-	} else {
-		if v, ok := resourceData.GetOk("maven"); ok {
-			if err := resourceData.Set("maven", v); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -114,11 +100,6 @@ func resourceMavenGroupRepositoryCreate(resourceData *schema.ResourceData, m int
 func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
 
-	for _, key := range []string{"name", "online", "storage", "group", "maven"} {
-		val := resourceData.Get(key)
-		fmt.Printf("%s = %#v\n", key, val)
-	}
-
 	repo, err := client.Repository.Maven.Group.Get(resourceData.Id())
 	if err != nil {
 		return err
@@ -130,8 +111,9 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 	}
 
 	if repo.Maven == nil {
-		if v, ok := resourceData.GetOk("maven"); ok {
-			m := v.([]interface{})[0].(map[string]interface{})
+		// reconstruct from the user inputs that we printed
+		if v, ok := resourceData.Get("maven").([]interface{}); ok && len(v) > 0 {
+			m := v[0].(map[string]interface{})
 			repo.Maven = &repository.Maven{
 				VersionPolicy: repository.MavenVersionPolicy(m["version_policy"].(string)),
 				LayoutPolicy:  repository.MavenLayoutPolicy(m["layout_policy"].(string)),
