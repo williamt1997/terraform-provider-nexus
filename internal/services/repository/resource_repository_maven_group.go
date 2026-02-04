@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	nexus "github.com/williamt1997/go-nexus-client/v2/nexus3"
 	"github.com/williamt1997/go-nexus-client/v2/nexus3/schema/repository"
@@ -113,6 +115,11 @@ func resourceMavenGroupRepositoryCreate(resourceData *schema.ResourceData, m int
 
 func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
+
+	for _, key := range []string{"name", "online", "storage", "group", "maven"} {
+		val := resourceData.Get(key)
+		fmt.Printf("%s = %#v\n", key, val)
+	}
 
 	repo, err := client.Repository.Maven.Group.Get(resourceData.Id())
 	if err != nil {
