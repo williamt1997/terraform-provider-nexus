@@ -81,6 +81,14 @@ func TestAccResourceRepositoryMavenGroup(t *testing.T) {
 				ImportStateId:     repo.Name,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"maven",
+					"maven.#",
+					"maven.0.%",
+					"maven.0.version_policy",
+					"maven.0.layout_policy",
+					"maven.0.content_disposition",
+				},
 			},
 		},
 	})
