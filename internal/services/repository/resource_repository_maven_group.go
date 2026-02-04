@@ -29,7 +29,8 @@ func ResourceRepositoryMavenGroup() *schema.Resource {
 			// Group schemas
 			"group":   repositorySchema.ResourceGroup,
 			"storage": repositorySchema.ResourceStorage,
-			"maven":   repositorySchema.ResourceMaven,
+			// Maven hosted schemas
+			"maven": repositorySchema.ResourceMaven,
 		},
 	}
 }
@@ -39,13 +40,10 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 	groupConfig := resourceData.Get("group").([]interface{})[0].(map[string]interface{})
 	mavenConfig := resourceData.Get("maven").([]interface{})[0].(map[string]interface{})
 
-	// Build group member names
 	groupMemberNames := []string{}
 	for _, name := range groupConfig["member_names"].([]interface{}) {
 		groupMemberNames = append(groupMemberNames, name.(string))
 	}
-
-	// Build the MavenGroupRepository struct
 	repo := repository.MavenGroupRepository{
 		Name:   resourceData.Get("name").(string),
 		Online: resourceData.Get("online").(bool),
@@ -56,7 +54,7 @@ func getMavenGroupRepositoryFromResourceData(resourceData *schema.ResourceData) 
 		Group: repository.Group{
 			MemberNames: groupMemberNames,
 		},
-		Maven: repository.Maven{
+		Maven: &repository.Maven{
 			VersionPolicy: repository.MavenVersionPolicy(mavenConfig["version_policy"].(string)),
 			LayoutPolicy:  repository.MavenLayoutPolicy(mavenConfig["layout_policy"].(string)),
 		},
@@ -81,12 +79,6 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 
 	if err := resourceData.Set("group", flattenGroup(&repo.Group)); err != nil {
 		return err
-	}
-
-	if repo.Maven.VersionPolicy != "" || repo.Maven.LayoutPolicy != "" {
-		if err := resourceData.Set("maven", flattenMaven(&repo.Maven)); err != nil {
-			return err
-		}
 	}
 
 	return nil
