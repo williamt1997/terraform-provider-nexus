@@ -81,6 +81,20 @@ func setMavenGroupRepositoryToResourceData(repo *repository.MavenGroupRepository
 		return err
 	}
 
+	if repo.Maven != nil {
+		mavenMap := map[string]interface{}{
+			"version_policy": repo.Maven.VersionPolicy,
+			"layout_policy":  repo.Maven.LayoutPolicy,
+		}
+		if repo.Maven.ContentDisposition != nil {
+			mavenMap["content_disposition"] = *repo.Maven.ContentDisposition
+		}
+
+		if err := resourceData.Set("maven", []interface{}{mavenMap}); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -108,6 +122,20 @@ func resourceMavenGroupRepositoryRead(resourceData *schema.ResourceData, m inter
 	if repo == nil {
 		resourceData.SetId("")
 		return nil
+	}
+
+	if repo.Maven == nil {
+		if v, ok := resourceData.GetOk("maven"); ok {
+			m := v.([]interface{})[0].(map[string]interface{})
+			repo.Maven = &repository.Maven{
+				VersionPolicy: repository.MavenVersionPolicy(m["version_policy"].(string)),
+				LayoutPolicy:  repository.MavenLayoutPolicy(m["layout_policy"].(string)),
+			}
+			if cd, exists := m["content_disposition"]; exists && cd.(string) != "" {
+				contentDisposition := repository.MavenContentDisposition(cd.(string))
+				repo.Maven.ContentDisposition = &contentDisposition
+			}
+		}
 	}
 
 	return setMavenGroupRepositoryToResourceData(repo, resourceData)
